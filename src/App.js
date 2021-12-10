@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import FacebookLink from "./FacebookLink";
 import TwitterLink from "./TwitterLink";
+import { CSSTransition } from "react-transition-group";
 
 const validURL = (str) => {
   var pattern = new RegExp(
@@ -40,21 +41,32 @@ function App() {
         className={inputError ? "error" : ""}
       />
 
-      {showLinks && (
+      <CSSTransition
+        in={showLinks}
+        timeout={1000}
+        classNames="show-links-transition"
+        unmountOnExit
+        appear
+      >
         <textarea
           placeholder="Tu descripción opcional aquí"
           onChange={handleDescriptionChange}
-        >
-          {description}
-        </textarea>
-      )}
-
-      {showLinks && (
+          value={description}
+        ></textarea>
+      </CSSTransition>
+      <CSSTransition
+        in={showLinks}
+        timeout={1000}
+        classNames="show-links-transition"
+        unmountOnExit
+        appear
+      >
         <div className="links">
           <TwitterLink url={url} description={description}></TwitterLink>
           <FacebookLink url={url} description={description}></FacebookLink>
         </div>
-      )}
+      </CSSTransition>
+
     </div>
   );
 }

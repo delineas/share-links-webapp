@@ -16,3 +16,24 @@ input {
 input.error {
   border: 3px solid red;
 }
+
+.show-links-transition-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.show-links-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 600ms, transform 600ms;
+}
+
+.show-links-transition-exit {
+  opacity: 1;
+}
+
+.show-links-transition-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 600ms, transform 600ms;
+}
