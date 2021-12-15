@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 import FacebookLink from "./FacebookLink";
 import TwitterLink from "./TwitterLink";
@@ -17,12 +17,26 @@ const validURL = (str) => {
   return !!pattern.test(str);
 };
 
-function App() {
-  const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
+// localhost:3000
+// ?url=
+// &description=
+// http://localhost:3000/?url=https://perico.com&description=Este%20enlace%20me%20mola
 
-  const inputError = url != "" && !validURL(url);
-  const showLinks = url != "" && !inputError;
+const urlParams = new URL(window.location);
+
+function App() {
+
+  const [url, setUrl] = useState(() => {
+    return urlParams.searchParams.has('url') ? urlParams.searchParams.get('url') : ""
+  });
+  const [description, setDescription] = useState(() => {
+    return urlParams.searchParams.has("description")
+      ? urlParams.searchParams.get("description")
+      : "";
+  });
+
+  const inputError = url !== "" && !validURL(url);
+  const showLinks = url !== "" && !inputError;
 
   const handleURLChange = ({ target }) => {
     setUrl(target.value);
@@ -30,6 +44,8 @@ function App() {
   const handleDescriptionChange = ({ target }) => {
     setDescription(target.value);
   };
+
+  const nodeRef = useRef(null);
 
   return (
     <div className="app">
@@ -39,6 +55,8 @@ function App() {
         onChange={handleURLChange}
         placeholder="Tu URL para compartir aquí"
         className={inputError ? "error" : ""}
+        autoFocus
+        data-testid="input-url"
       />
 
       <CSSTransition
@@ -47,26 +65,18 @@ function App() {
         classNames="show-links-transition"
         unmountOnExit
         appear
-      >
-        <textarea
-          placeholder="Tu descripción opcional aquí"
-          onChange={handleDescriptionChange}
-          value={description}
-        ></textarea>
-      </CSSTransition>
-      <CSSTransition
-        in={showLinks}
-        timeout={1000}
-        classNames="show-links-transition"
-        unmountOnExit
-        appear
+        nodeRef={nodeRef}
       >
         <div className="links">
+          <textarea
+            placeholder="Tu descripción opcional aquí"
+            onChange={handleDescriptionChange}
+            value={description}
+          ></textarea><br/>
           <TwitterLink url={url} description={description}></TwitterLink>
           <FacebookLink url={url} description={description}></FacebookLink>
         </div>
       </CSSTransition>
-
     </div>
   );
 }
